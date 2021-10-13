@@ -8,9 +8,9 @@
         "email": "akshay.kumar758@webkul.com"
     }],
     "require": {
-        "php": "^7.2 || ^8.0",
-        "uvdesk/composer-plugin": "@dev",
-        "uvdesk/core-framework": "@dev",
+        "php": "^7.3 || ^8.0",
+        "uvdesk/composer-plugin": "^1.0",
+        "uvdesk/core-framework": "^1.0",
         "iamcal/lib_autolink": "^1.7",
         "php-mime-mail-parser/php-mime-mail-parser": "^7.0.0"
     },
