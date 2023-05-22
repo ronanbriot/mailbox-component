@@ -389,8 +389,37 @@ class MailboxService
             }
         }
 
+        $mailboxEmail = null;
+        $mailboxEmailCandidates = !empty($addresses['to']) ? $addresses['to'] : [];
+
+        foreach ($addresses['delivered-to'] as $emailAddress) {
+            $mailboxEmailCandidates[] = $emailAddress['address'];
+        }
+
+        if (!empty($addresses['cc'])) {
+            foreach ($addresses['cc'] as $emailAddress) {
+                $mailboxEmailCandidates[] = is_array($emailAddress) ? $emailAddress['address'] : $emailAddress;
+            }
+        }
+
+        $mailboxEmailCandidates = array_values(array_unique(array_filter($mailboxEmailCandidates)));
+
+        foreach ($mailboxEmailCandidates as $emailAddress) {
+            try {
+                $mailbox = $this->getMailboxByEmail($emailAddress);
+
+                if (!empty($mailbox)) {
+                    $mailboxEmail = $emailAddress;
+
+                    break;
+                }
+            } catch (\Exception $e) { /* No mailboxes found */ }
+        }
+
         // Process Mail - References
         $addresses['to'][0] = isset($mailData['replyTo']) ? strtolower($mailData['replyTo']) : strtolower($addresses['to'][0]);
+
+        $mailData['mailboxEmail'] = $mailboxEmail;
         $mailData['replyTo'] = $addresses['to'];
         $mailData['messageId'] = $parser->getHeader('message-id') ?: null;
         $mailData['inReplyTo'] = htmlspecialchars_decode($parser->getHeader('in-reply-to'));
@@ -447,13 +476,15 @@ class MailboxService
             // }
 
             $thread = $this->container->get('ticket.service')->createTicket($mailData);
-
-            // Trigger ticket created event
-            $event = new GenericEvent(CoreWorkflowEvents\Ticket\Create::getId(), [
-                'entity' =>  $thread->getTicket(),
-            ]);
-
-            $this->container->get('event_dispatcher')->dispatch($event, 'uvdesk.automation.workflow.execute');
+    
+            if (!empty($thread)) {
+                // Trigger ticket created event
+                $event = new GenericEvent(CoreWorkflowEvents\Ticket\Create::getId(), [
+                    'entity' =>  $thread->getTicket(),
+                ]);
+    
+                $this->container->get('event_dispatcher')->dispatch($event, 'uvdesk.automation.workflow.execute');
+            }
         } else if (false === $ticket->getIsTrashed() && strtolower($ticket->getStatus()->getCode()) != 'spam' && !empty($mailData['inReplyTo'])) {
             $mailData['threadType'] = 'reply';
             $thread = $this->entityManager->getRepository(Thread::class)->findOneByMessageId($mailData['messageId']);
