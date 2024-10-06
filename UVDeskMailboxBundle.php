@@ -4,13 +4,15 @@ namespace Webkul\UVDesk\MailboxBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Webkul\UVDesk\MailboxBundle\DependencyInjection\UVDeskExtension;
-// use Webkul\UVDesk\MailboxBundle\DependencyInjection\Compilers as UVDeskMailboxCompilers;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class UVDeskMailboxBundle extends Bundle
 {
-    public function getContainerExtension()
+    /**
+     * @return ExtensionInterface
+    */
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new UVDeskExtension();
     }
