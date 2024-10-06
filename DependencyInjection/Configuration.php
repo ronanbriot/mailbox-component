@@ -7,7 +7,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    /**
+     * @return TreeBuilder
+    */
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('knp_doctrine_behaviors');
         $treeBuilder->getRootNode('uvdesk_mailbox')
