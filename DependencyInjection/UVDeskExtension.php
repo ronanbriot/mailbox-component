@@ -6,6 +6,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class UVDeskExtension extends Extension
 {
@@ -17,7 +18,10 @@ class UVDeskExtension extends Extension
         return 'uvdesk_mailbox';
     }
 
-    public function getConfiguration(array $configs, ContainerBuilder $container)
+    /**
+     * @return ConfigurationInterface
+    */
+    public function getConfiguration(array $configs, ContainerBuilder $container): ?ConfigurationInterface
     {
         return new Configuration();
     }
