@@ -21,6 +21,10 @@ class RefreshMailboxCommand extends Command
 {
     private $endpoint;
     private $outlookEndpoint;
+    private $container;
+    private $entityManager;
+    private $microsoftIntegration;
+    private $mailboxService;
 
     public function __construct(ContainerInterface $container, EntityManagerInterface $entityManager, MicrosoftIntegration $microsoftIntegration, MailboxService $mailboxService)
     {
